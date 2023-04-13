@@ -1,11 +1,11 @@
-# baseURL = 'http://bartplasmeijer.nl/'
+# baseURL = 'https://www.bartplasmeijer.nl/'
 # languageCode = 'en-us'
 # title = 'Bart Plasmeijer working on '
 # theme = 'archie'
 
-baseURL = "https://bartplasmeijer.nl/"
+baseURL = "https://www.bartplasmeijer.nl/"
 languageCode = "en-us"
-title = "Putting Together"
+title = "Bart's Putting Together"
 theme="archie"
 copyright = "© Bart Plasmeijer"
 # Code Highlight
