@@ -22,6 +22,7 @@ pagerSize = 3 # articles per page
 	subtitle = "My Tech Passion"
 	mathjax = true # enable MathJax support
 	katex = true # enable KaTeX support
+	googletagid = "G-C9FHDPYMLE"
 	mainSections = ["posts"]
 
 # Social Tags

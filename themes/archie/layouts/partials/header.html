@@ -101,4 +101,15 @@
 	<script src="{{ $.Site.BaseURL }}{{ . }}"></script>
 	{{- end }}
 	{{- end }}
+	{{- $baseURL := lower .Site.BaseURL -}}
+	{{- if and (eq hugo.Environment "production") (.Site.Params.googletagid) (not (in $baseURL "localhost")) (not (in $baseURL "127.0.0.1")) }}
+	<script async src="https://www.googletagmanager.com/gtag/js?id={{ .Site.Params.googletagid }}"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', '{{ .Site.Params.googletagid }}');
+	</script>
+	{{- end }}
 </head>
