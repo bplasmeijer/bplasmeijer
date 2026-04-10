@@ -1,7 +1,7 @@
 +++
 title = "My #Easter project is completed."
-date = "2026-04-10"
-draft = true
+date = "2026-04-06"
+draft = false
 type = "post"
 linkedin_url = "https://www.linkedin.com/posts/bartplasmeijer_easter-lego-tintin-share-7446941832523001857-_6aT?utm_source=share&utm_medium=member_desktop&rcm=ACoAAABgFrcBAPKYv-j5vZigqzjAWhl4UllBpTg"
 tags = ["easter", "lego", "tintin", "ai", "moon", "artemis", "agentic", "llm", "engineering"]
