@@ -13,7 +13,8 @@ pygmentsstyle = "monokai"
 pygmentscodefences = true
 pygmentscodefencesguesssyntax = true
 
-paginate=3 # articles per page
+[pagination]
+pagerSize = 3 # articles per page
 
 [params]
 	mode="dark" # color-mode → light,dark,toggle or auto
@@ -21,6 +22,7 @@ paginate=3 # articles per page
 	subtitle = "My Tech Passion"
 	mathjax = true # enable MathJax support
 	katex = true # enable KaTeX support
+	mainSections = ["posts"]
 
 # Social Tags
 
@@ -42,16 +44,11 @@ url = "/"
 weight = 1
 
 [[menu.main]]
-name = "All posts"
-url = "/posts"
+name = "About"
+url = "/about"
 weight = 2
-
-# [[menu.main]]
-# name = "About"
-# url = "/about"
-# weight = 3
 
 [[menu.main]]
 name = "Tags"
 url = "/tags"
-weight = 4
+weight = 3

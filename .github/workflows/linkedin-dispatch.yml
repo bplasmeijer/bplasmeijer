@@ -1,0 +1,78 @@
+name: Import LinkedIn Post
+
+on:
+  workflow_dispatch:
+    inputs:
+      post_url:
+        description: LinkedIn post URL to import
+        required: true
+        type: string
+      slug:
+        description: Optional slug override for the generated Hugo post
+        required: false
+        type: string
+      overwrite:
+        description: Overwrite an existing imported draft with the same date and slug
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+jobs:
+  import-post:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Mirror LinkedIn post
+        env:
+          POST_URL: ${{ inputs.post_url }}
+        run: |
+          set -euo pipefail
+          mirror_url="https://r.jina.ai/http://r.jina.ai/http://${POST_URL#https://}"
+          curl -L -s \
+            -A 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/135.0 Safari/537.36' \
+            "$mirror_url" > /tmp/linkedin-post.md
+          test -s /tmp/linkedin-post.md
+
+      - name: Generate Hugo draft
+        id: generate
+        env:
+          POST_URL: ${{ inputs.post_url }}
+          SLUG: ${{ inputs.slug }}
+          OVERWRITE: ${{ inputs.overwrite }}
+        run: |
+          set -euo pipefail
+          overwrite_flag=""
+          if [[ "$OVERWRITE" == "true" ]]; then
+            overwrite_flag="--overwrite"
+          fi
+          output_path=$(python3 .github/scripts/linkedin_to_hugo.py \
+            --input /tmp/linkedin-post.md \
+            --output-dir content/posts \
+            --post-url "$POST_URL" \
+            --slug "$SLUG" \
+            $overwrite_flag)
+          echo "output_path=$output_path" >> "$GITHUB_OUTPUT"
+
+      - name: Commit generated draft
+        env:
+          OUTPUT_PATH: ${{ steps.generate.outputs.output_path }}
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add "$OUTPUT_PATH" static/images/linkedin
+          git commit -m "Add LinkedIn draft: $(basename "$OUTPUT_PATH" .md)"
+          git push
