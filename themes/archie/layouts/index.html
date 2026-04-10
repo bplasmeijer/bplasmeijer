@@ -15,12 +15,18 @@
 				{{ $pages := where .Site.RegularPages "Section" "in" .Site.Params.mainSections }}
 				{{ $visiblePages := where $pages "Params.hidden" "ne" true }}
 				{{ $paginator := .Paginate ($visiblePages.ByDate.Reverse) }}
-				{{ range $paginator.Pages }}
+				{{ range $index, $page := $paginator.Pages }}
 				<section class="list-item">
-					<h1 class="title"><a href="{{ .RelPermalink }}">{{.Title}}</a></h1>
-					<time>{{ dateFormat "Jan 2, 2006" .Date }}{{ if .Draft }} <span class="draft-label">DRAFT</span> {{ end }}</time>
-					<br>{{ template "partials/pagedescription.html" . }}
-					<a class="readmore" href="{{ .RelPermalink }}">Read more ⟶</a>
+					<h1 class="title"><a href="{{ $page.RelPermalink }}">{{ $page.Title }}</a></h1>
+					<time>{{ dateFormat "Jan 2, 2006" $page.Date }}{{ if $page.Draft }} <span class="draft-label">DRAFT</span> {{ end }}</time>
+					{{ if eq $index 0 }}
+					<div>
+						{{ $page.Content }}
+					</div>
+					{{ else }}
+					<br>{{ template "partials/pagedescription.html" $page }}
+					<a class="readmore" href="{{ $page.RelPermalink }}">Read more ⟶</a>
+					{{ end }}
 				</section>
 				{{ end }}
 				{{ template "partials/paginator.html" . }}
