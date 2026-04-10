@@ -5,7 +5,7 @@
 
 baseURL = "https://www.bartplasmeijer.nl/"
 languageCode = "en-us"
-title = "Bart's Putting Together"
+title = "Bart Plasmeijer | AI, Architecture & Engineering"
 theme="archie"
 copyright = "© Bart Plasmeijer"
 # Code Highlight
