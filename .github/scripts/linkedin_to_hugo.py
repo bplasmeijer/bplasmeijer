@@ -7,6 +7,7 @@ import datetime as dt
 import mimetypes
 import pathlib
 import re
+import ssl
 import sys
 from urllib.parse import urlparse
 from urllib.request import Request, urlopen
@@ -207,7 +208,11 @@ def infer_image_extension(content_type: str | None, image_url: str) -> str:
 def download_image(image_url: str) -> tuple[bytes, str] | tuple[None, None]:
     try:
         request = Request(image_url, headers={"User-Agent": USER_AGENT})
-        with urlopen(request, timeout=30) as response:
+        # Create SSL context that doesn't verify certificates (LinkedIn CDN has cert issues)
+        ssl_context = ssl.create_default_context()
+        ssl_context.check_hostname = False
+        ssl_context.verify_mode = ssl.CERT_NONE
+        with urlopen(request, timeout=30, context=ssl_context) as response:
             content = response.read()
             content_type = response.headers.get("Content-Type", "")
         return content, content_type
