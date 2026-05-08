@@ -176,6 +176,9 @@ def extract_image_urls(raw_text: str) -> list[str]:
         for url in re.findall(r"!\[[^\]]*\]\((https://[^)]+)\)", line):
             if "media.licdn.com" not in url:
                 continue
+            # Skip profile photos and background images
+            if any(skip in url for skip in ["profile-displayphoto", "profile-displaybackgroundimage"]):
+                continue
             if url not in seen:
                 image_urls.append(url)
                 seen.add(url)
