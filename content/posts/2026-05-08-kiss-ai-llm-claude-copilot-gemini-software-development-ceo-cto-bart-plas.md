@@ -11,16 +11,14 @@ To plan, build, and get good results from your LLM.
 
 A principal that works best for me:
 
-✅ As a: [Your Specific Persona]
-✅ I want to: [Your Precise Goal]
-✅ So that: [The Real Value/Outcome]
-✅ Constraints: [Tone, Length, No-Go's]
+- ✅ As a: [Your Specific Persona]
+- ✅ I want to: [Your Precise Goal]
+- ✅ So that: [The Real Value/Outcome]
+- ✅ Constraints: [Tone, Length, No-Go's]
 
-Stick to the #KISS principle.
+Stick to the #KISS principle. And be precise about what you want and prioritize short tasks over long ones.
 
-And be precise about what you want and prioritize short tasks over long ones.
-
-#ai #llm #claude #copilot #gemini #software #development #ceo #cto
+\#ai \#llm \#claude \#copilot \#gemini \#software \#development \#ceo \#cto
 
 ![LinkedIn image 1](/images/linkedin/kiss-ai-llm-claude-copilot-gemini-software-development-ceo-cto-bart-plas-1.jpg)
 
