@@ -44,6 +44,14 @@ def extract_published_date(raw_text: str) -> str:
 
 
 def extract_title(raw_text: str, body: str) -> str:
+    # Try to extract from "Title:" field first (new format)
+    match = re.search(r"^Title:\s*(.+?)$", raw_text, re.MULTILINE)
+    if match:
+        title = match.group(1).strip()
+        if title and len(title) > 5:
+            return title[:120].rstrip()
+    
+    # Fallback to first sentence of body
     sentence = re.split(r"(?<=[.!?])\s+", body, maxsplit=1)[0].strip()
     if sentence:
         return sentence[:120].rstrip()
@@ -54,10 +62,18 @@ def extract_post_section(raw_text: str) -> list[str]:
     lines = raw_text.splitlines()
     start_index = None
 
+    # Try to find "Markdown Content:" section first (new format)
     for index, line in enumerate(lines):
-        if "Report this post" in line:
+        if "Markdown Content:" in line:
             start_index = index + 1
             break
+    
+    # Fallback to old format with "Report this post"
+    if start_index is None:
+        for index, line in enumerate(lines):
+            if "Report this post" in line:
+                start_index = index + 1
+                break
 
     if start_index is None:
         raise ValueError("Could not find LinkedIn post body anchor in mirrored content")
@@ -68,6 +84,7 @@ def extract_post_section(raw_text: str) -> list[str]:
         "Share",
         "To view or add a comment",
         "## More from this author",
+        "## More Relevant Posts",
         "## Explore content categories",
     )
 
@@ -105,6 +122,7 @@ def should_skip_line(line: str) -> bool:
         "[View Profile]",
         "[Follow]",
         "## More from this author",
+        "## More Relevant Posts",
         "## Explore content categories",
     )
     if stripped in {"22h", "1d", "2d", "3d", "4d", "5d", "6d", "1w"}:
@@ -112,6 +130,9 @@ def should_skip_line(line: str) -> bool:
     if stripped.endswith("followers"):
         return True
     if stripped.endswith("Posts]") or stripped.endswith("Article]"):
+        return True
+    # Skip lines that are just links
+    if stripped.startswith("[](https://"):
         return True
     return stripped.startswith(skip_prefixes)
 
@@ -183,12 +204,16 @@ def infer_image_extension(content_type: str | None, image_url: str) -> str:
     return extension or ".jpg"
 
 
-def download_image(image_url: str) -> tuple[bytes, str]:
-    request = Request(image_url, headers={"User-Agent": USER_AGENT})
-    with urlopen(request, timeout=30) as response:
-        content = response.read()
-        content_type = response.headers.get("Content-Type", "")
-    return content, content_type
+def download_image(image_url: str) -> tuple[bytes, str] | tuple[None, None]:
+    try:
+        request = Request(image_url, headers={"User-Agent": USER_AGENT})
+        with urlopen(request, timeout=30) as response:
+            content = response.read()
+            content_type = response.headers.get("Content-Type", "")
+        return content, content_type
+    except Exception as e:
+        print(f"Warning: Failed to download image {image_url}: {e}", file=sys.stderr)
+        return None, None
 
 
 def write_images(image_urls: list[str], image_dir: pathlib.Path, slug: str) -> list[str]:
@@ -197,6 +222,9 @@ def write_images(image_urls: list[str], image_dir: pathlib.Path, slug: str) -> l
 
     for index, image_url in enumerate(image_urls, start=1):
         content, content_type = download_image(image_url)
+        if content is None:
+            # Skip images that fail to download
+            continue
         extension = infer_image_extension(content_type, image_url)
         file_name = f"{slug}-{index}{extension}"
         file_path = image_dir / file_name
